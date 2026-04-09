@@ -1,0 +1,51 @@
+Processos no timestamp 09/04/2026 19:05
+PID: 830
+Comando: node
+Memória usada: 898.1 MB
+Tempo de execução: 01:35:30
+---
+PID: 1739
+Comando: node
+Memória usada: 266.5 MB
+Tempo de execução: 01:35:14
+---
+PID: 1020
+Comando: node
+Memória usada: 183.6 MB
+Tempo de execução: 01:35:28
+---
+PID: 1018
+Comando: node
+Memória usada: 151.8 MB
+Tempo de execução: 01:35:30
+---
+PID: 736
+Comando: node
+Memória usada: 147.8 MB
+Tempo de execução: 01:35:40
+---
+PID: 1215
+Comando: node
+Memória usada: 95.9 MB
+Tempo de execução: 01:35:33
+---
+PID: 274
+Comando: dockerd
+Memória usada: 79.3 MB
+Tempo de execução: 01:35:48
+---
+PID: 886
+Comando: node
+Memória usada: 72.0 MB
+Tempo de execução: 01:35:42
+---
+PID: 780
+Comando: node
+Memória usada: 63.6 MB
+Tempo de execução: 01:35:47
+---
+PID: 1762
+Comando: node
+Memória usada: 62.3 MB
+Tempo de execução: 01:35:29
+---

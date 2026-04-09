@@ -1,47 +1,36 @@
 #!/bin/bash
-set -eu
+set -e
 
-FORMAT=""
+function listProcessInfo() {
 
-function readFormat() {
-    FORMATS=$(convert -list format | awk '/ rw/ {print tolower($1)}' | sed 's/\*//g' | awk '{print NR " - " $0}')
-    LAST_FORMAT_COUNT=$(echo "$FORMATS" | awk 'END {print NR}')
+    local PS_FILE='processos.txt'
+    # pega os 10 PIDs com maior uso de memória (sem cabeçalho)
+    local PIDS=($(ps -e -o pid= --sort=-rss | head -n 10 | sed 's/^ *//'))
 
-    echo "Bem vindo ao conversor de imagens!"
-    echo "$FORMATS"
+    echo "Preenchendo arquivo $PS_FILE.."
+    echo "Processos no timestamp $(date +"%d/%m/%Y %H:%M")" >"$PS_FILE"
 
-    while true; do
-        read "OPTION?❓ Insira o número do formato que deseja converter (1 a $LAST_FORMAT_COUNT): "
+    for PID in $PIDS; do
+        
+        # obtém os campos e faz um parse robusto (usando awk)
+        info=$(ps -p "$PID" -o pid=,comm=,rss=,etime=)
+        pid=$(awk '{print $1}' <<<"$info")
+        comm=$(awk '{print $2}' <<<"$info")
+        rss=$(awk '{print $3}' <<<"$info")
+        etime=$(awk '{print $4}' <<<"$info")
 
-        if ! [[ "$OPTION" =~ ^[0-9]+$ ]] || [[ "$OPTION" -lt 1 || "$OPTION" -gt "$LAST_FORMAT_COUNT" ]]; then
-            echo "❌ Opção \"$OPTION\" inválida. Digite um número entre 1 e $LAST_FORMAT_COUNT!!"
-        else
-            FORMAT=$(echo "$FORMATS" | grep "^$OPTION " | awk '{print $3}')
-            echo "✅ Tudo certo! Formato escolhido: $FORMAT"
+        # rss vem em KB, converte para MB com uma casa decimal
+        RSS_MB=$(awk -v k="$rss" 'BEGIN{printf "%.1f", k/1024}')
+        {
+            echo "PID: $pid"
+            echo "Comando: $comm"
+            echo "Memória usada: ${RSS_MB} MB"
+            echo "Tempo de execução: $etime"
+            echo "---"
+        } >>"$PS_FILE"
 
-            break
-        fi
+        sleep 2
     done
 }
 
-function makeDir() {
-    DIR="imagens-convertidas-para-$FORMAT"
-
-    echo "🔎 Criando pasta..."
-    sleep 2
-    if [[ -d "$DIR" ]]; then
-        echo "❌ Pasta com formato $FORMAT já existe, delete e tente novamente!"
-        exit 1
-    fi
-
-    mkdir "$DIR"
-    echo "✅ Feito! pasta criada corretamente"
-}
-
-function convertImages(){
-    echo "🔎 Convertendo imagens para pasta imagens-convertidas-para-$FORMAT..."
-}
-
-readFormat
-makeDir
-convertImages
+listProcessInfo
